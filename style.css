@@ -1,50 +1,30 @@
-{\rtf1\ansi\ansicpg1252\cocoartf2821
-\cocoatextscaling0\cocoaplatform0{\fonttbl\f0\fswiss\fcharset0 Helvetica;}
-{\colortbl;\red255\green255\blue255;}
-{\*\expandedcolortbl;;}
-\margl1440\margr1440\vieww11520\viewh8400\viewkind0
-\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
-
-\f0\fs24 \cf0 body \{\
-    font-family: Arial, sans-serif;\
-    background: #111;\
-    color: white;\
-    margin: 0;\
-    padding: 0;\
-\}\
-\
-.container \{\
-    max-width: 500px;\
-    margin: auto;\
-    padding: 20px;\
-\}\
-\
-input, select \{\
-    width: 100%;\
-    padding: 12px;\
-    margin: 5px 0;\
-    border-radius: 8px;\
-    border: none;\
-    font-size: 18px;\
-\}\
-\
-button \{\
-    width: 100%;\
-    padding: 12px;\
-    margin-top: 10px;\
-    background: #28a745;\
-    border: none;\
-    color: white;\
-    font-size: 18px;\
-    border-radius: 8px;\
-\}\
-\
-button:active \{\
-    opacity: 0.6;\
-\}\
-\
-#result \{\
-    margin-top: 20px;\
-    font-size: 20px;\
-\}\
+:root{
+  --felt:#0d4d2d; /* deep green felt */
+  --accent:#d4af37; /* gold */
+  --panel:#173b2b; /* darker green */
+  --muted:#bfbfbf;
+  --card-bg: linear-gradient(180deg,#124025,#0d291c);
 }
+*{box-sizing:border-box}
+html,body{height:100%;margin:0;font-family:Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;color:#eee;background:linear-gradient(180deg,#0b2b1a,#07180f)}
+.app-header{display:flex;align-items:center;justify-content:space-between;padding:14px}
+.logo{display:flex;align-items:center;gap:12px}
+.chip{background:var(--accent);color:#052210;font-weight:700;padding:8px 10px;border-radius:8px;font-size:18px;box-shadow:0 4px 8px rgba(0,0,0,0.4)}
+.app-header h1{font-size:20px;margin:0}
+.icon-btn{background:transparent;border:1px solid rgba(255,255,255,0.08);color:var(--muted);padding:8px 10px;border-radius:8px}
+.container{padding:12px;display:grid;grid-template-columns:1fr;gap:12px}
+.panel{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.04);padding:12px;border-radius:12px;backdrop-filter: blur(4px)}
+.card-grid .cards{display:flex;flex-wrap:wrap;gap:6px}
+.btn{padding:10px;border-radius:10px;border:none}
+.cards button{min-width:56px;padding:8px;border-radius:8px;background:linear-gradient(180deg,#15472f,#0f3a23);color:#fff;border:2px solid rgba(212,175,55,0.08);font-weight:600}
+.cards button.selected{outline:3px solid rgba(212,175,55,0.16);transform:translateY(-2px)}
+.outcome-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px}
+.outcome-btn{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.05);padding:12px 18px;border-radius:10px;color:#fff;font-weight:700}
+.quick-input{display:flex;gap:8px;margin-top:8px}
+.quick-input input{flex:1;padding:8px;border-radius:8px;border:1px solid rgba(255,255,255,0.05);background:rgba(255,255,255,0.02);color:#fff}
+.small{padding:8px 10px;border-radius:8px}
+.result{white-space:pre-wrap;font-family:monospace;background:linear-gradient(180deg,#08301f,#061b11);padding:10px;margin-top:8px;border-radius:8px;color:#dfeadc}
+.data-list{max-height:220px;overflow:auto}
+.data-item{display:flex;justify-content:space-between;padding:8px;border-radius:6px;margin-bottom:6px;background:rgba(255,255,255,0.02);border:1px solid rgba(0,0,0,0.2)}
+.footer{text-align:center;padding:12px;color:var(--muted);font-size:13px}
+@media(min-width:800px){.container{grid-template-columns:1fr 320px}}
