@@ -1,17 +1,31 @@
-{\rtf1\ansi\ansicpg1252\cocoartf2821
-\cocoatextscaling0\cocoaplatform0{\fonttbl\f0\fswiss\fcharset0 Helvetica;}
-{\colortbl;\red255\green255\blue255;}
-{\*\expandedcolortbl;;}
-\margl1440\margr1440\vieww11520\viewh8400\viewkind0
-\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+# TPK Analyzer
 
-\f0\fs24 \cf0 # TPK Analyzer\
-\
-This is a simple probability tracker for the first-flip card in TPK.\
-\
-Features:\
-- Record outcomes (HC, 1P, 2P, 3K, FH)\
-- Predict probability based on stored data\
-- LocalStorage database\
-- Mobile touchscreen friendly\
-}
+Mobile-first PWA to record and predict final board outcomes based on the first flip card. Casino-themed.
+
+## Features
+- Fast shorthand inputs (HC, 2P, 3K, FH)
+- Mobile touchscreen UI
+- Stores data in localStorage
+- Offline-capable (service worker)
+
+## Files
+- `index.html` — main UI
+- `style.css` — casino theme
+- `script.js` — logic and storage
+- `service-worker.js` — offline cache
+- `manifest.json` — PWA manifest
+
+## Quick deploy to GitHub Pages
+1. Create a new public repo named `TPK-Analyzer` on GitHub.
+2. `git init && git add . && git commit -m "Initial"`
+3. `git remote add origin https://github.com/<your-username>/TPK-Analyzer.git`
+4. `git push -u origin main`
+5. In the repo settings -> Pages -> set the branch to `main` and folder `/ (root)` then Save.
+6. After a minute your site will be available at `https://<your-username>.github.io/TPK-Analyzer/`.
+
+## Install on iPhone
+Open the site in Safari, tap Share → Add to Home Screen.
+
+## Notes
+- Data is stored per-browser (localStorage). If you clear site storage the records will be lost.
+- If you want CSV export/import, I can add it.
