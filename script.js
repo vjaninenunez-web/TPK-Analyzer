@@ -1,61 +1,62 @@
-{\rtf1\ansi\ansicpg1252\cocoartf2821
-\cocoatextscaling0\cocoaplatform0{\fonttbl\f0\fswiss\fcharset0 Helvetica;}
-{\colortbl;\red255\green255\blue255;}
-{\*\expandedcolortbl;;}
-\margl1440\margr1440\vieww11520\viewh8400\viewkind0
-\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+// TPK Analyzer - script.js
+// Casino theme, mobile-first
 
-\f0\fs24 \cf0 // Database stored in localStorage\
-let db = JSON.parse(localStorage.getItem("tpk_db") || "\{\}");\
-\
-function saveDB() \{\
-    localStorage.setItem("tpk_db", JSON.stringify(db));\
-\}\
-\
-function record() \{\
-    const suit = document.getElementById("suitInput").value.toUpperCase();\
-    const rank = document.getElementById("rankInput").value;\
-    const outcome = document.getElementById("outcomeInput").value;\
-\
-    if (!suit || !rank) return alert("Enter suit and rank");\
-\
-    const key = suit + rank;\
-\
-    if (!db[key]) db[key] = [];\
-\
-    db[key].push(outcome);\
-    saveDB();\
-\
-    alert("Recorded!");\
-\}\
-\
-function predict() \{\
-    const suit = document.getElementById("predictSuit").value.toUpperCase();\
-    const rank = document.getElementById("predictRank").value;\
-\
-    const key = suit + rank;\
-\
-    if (!db[key] || db[key].length === 0) \{\
-        document.getElementById("result").innerText = "No data yet.";\
-        return;\
-    \}\
-\
-    const outcomes = db[key];\
-    const total = outcomes.length;\
-\
-    const count = \{\
-        HC: 0, "1P": 0, "2P": 0, 3K: 0, FH: 0\
-    \};\
-\
-    outcomes.forEach(o => count[o]++);\
-\
-    let text = `Total Records: $\{total\}\\n\\n`;\
-\
-    Object.keys(count).forEach(k => \{\
-        const pct = ((count[k] / total) * 100).toFixed(1);\
-        text += `$\{k\}: $\{count[k]\} ($\{pct\}%)\\n`;\
-    \});\
-\
-    document.getElementById("result").innerText = text;\
-\}\
+const RANKS = ["A","2","3","4","5","6","7","8","9","T","J","Q","K"];
+const SUITS = ["C","D","H","S"]; // Clover, Diamond, Heart, Spade
+const OUTCOME_MAP = {HC: 'High Card', '2P': 'Two Pair', '3K': 'Trips/Straight/Flush', 'FH': 'Full House'};
+const DB_KEY = 'tpk_db_v1';
+
+function loadDB(){ try { return JSON.parse(localStorage.getItem(DB_KEY) || '{}') } catch(e){ return {} } }
+function saveDB(db){ localStorage.setItem(DB_KEY, JSON.stringify(db)); }
+
+function normCard(code){ if(!code) return null; code = String(code).toUpperCase().replace(/♣|CLUB|CLOVER/g,'C').replace(/♠|SPADE/g,'S').replace(/♥|HEART/g,'H').replace(/♦|DIAMOND/g,'D').replace('10','T'); code = code.replace(/[^A-Z0-9]/g,''); return code; }
+
+// UI builders
+function buildCardButtons(){ const wrap = document.getElementById('cardButtons'); let html = ''; SUITS.forEach(s => { RANKS.forEach(r=>{ const label = r + s; const symbol = (s==='C'?'♣':s==='D'?'♦':s==='H'?'♥':'♠'); html += `<button data-card="${r+s}" class="card-btn">${r}${symbol}</button>`; }); html += '<br/>'; }); wrap.innerHTML = html; attachCardListeners(); }
+
+function attachCardListeners(){ document.querySelectorAll('.card-btn').forEach(btn=>{ btn.addEventListener('click', ()=>{ document.querySelectorAll('.card-btn').forEach(b=>b.classList.remove('selected')); btn.classList.add('selected'); window.selectedCard = btn.dataset.card; showSelected(); }); }); }
+
+function showSelected(){ const res = document.getElementById('predictResult'); res.textContent = window.selectedCard ? `Selected: ${window.selectedCard}` : 'No card selected'; }
+
+function addRecord(cardCode, shortOutcome){ const code = normCard(cardCode); if(!code) return alert('Invalid card'); const ocKey = (shortOutcome || '').toUpperCase(); const full = OUTCOME_MAP[ocKey] || OUTCOME_MAP[ocKey.replace(/[^A-Z]/g,'')]; if(!full){ return alert('Invalid outcome code. Use HC, 2P, 3K, FH.'); }
+  const db = loadDB(); if(!db[code]) db[code] = {'High Card':0,'Two Pair':0,'Trips/Straight/Flush':0,'Full House':0}; db[code][full] = (db[code][full]||0)+1; saveDB(db); renderDataList(); showMessage(`Recorded ${code} → ${full}`);
 }
+
+function predictCard(cardCode){ const code = normCard(cardCode); if(!code) return alert('Invalid card'); const db = loadDB(); const res = document.getElementById('predictResult'); if(!db[code]){ res.textContent = `No data for ${code}`; return; } const counts = db[code]; const total = Object.values(counts).reduce((a,b)=>a+b,0); let out = `Prediction for ${code}\nTotal: ${total}\n\n`; for(const k in counts){ out += `${k.padEnd(28)} : ${(counts[k]/total*100).toFixed(2)}%\n`; } res.textContent = out; }
+
+function renderDataList(){ const wrap = document.getElementById('dataList'); const db = loadDB(); const keys = Object.keys(db).sort(); if(!keys.length){ wrap.innerHTML = '<div style="color:#bbb">No stored data yet.</div>'; return; } wrap.innerHTML = keys.map(k=>{ const counts = db[k]; const total = Object.values(counts).reduce((a,b)=>a+b,0); return `<div class="data-item"><div><strong>${k}</strong><div style="font-size:12px;color:#ccc">${total} obs</div></div><div style="text-align:right">${Object.entries(counts).map(([name,c])=>`${name.split(' ')[0]}:${c}`).join('<br/>')}</div></div>` }).join(''); }
+
+function showMessage(txt){ const res = document.getElementById('predictResult'); res.textContent = txt; setTimeout(()=>{ if(window.selectedCard) res.textContent = `Selected: ${window.selectedCard}` },1200); }
+
+function quickAdd(){ const c = document.getElementById('quickCard').value; const o = document.getElementById('quickOutcome').value; if(!c||!o) return alert('Enter card and outcome'); addRecord(c,o); document.getElementById('quickCard').value=''; document.getElementById('quickOutcome').value=''; }
+
+function setupQuickControls(){ document.getElementById('quickAdd').addEventListener('click', quickAdd); document.getElementById('doPredict').addEventListener('click', ()=>{ const v = document.getElementById('predictCard').value; predictCard(v); }); document.getElementById('predictCard').addEventListener('keydown', e=>{ if(e.key==='Enter') document.getElementById('doPredict').click(); }); document.getElementById('quickOutcome').addEventListener('keydown', e=>{ if(e.key==='Enter') quickAdd(); });
+  document.getElementById('resetDB').addEventListener('click', ()=>{ if(confirm('Reset all recorded data? This cannot be undone.')){ localStorage.removeItem(DB_KEY); renderDataList(); showMessage('Database cleared'); } });
+
+  // outcome buttons record to currently selected card
+  document.querySelectorAll('.outcome-btn').forEach(b=>{ b.addEventListener('click', ()=>{ if(!window.selectedCard){ alert('Select a card first'); return; } addRecord(window.selectedCard, b.dataset.code || b.textContent.trim()); }); });
+}
+
+// Service worker registration (optional)
+if('serviceWorker' in navigator){ window.addEventListener('load', ()=>{ navigator.serviceWorker.register('service-worker.js').catch(e=>console.log('SW failed',e)); }); }
+
+// init
+buildCardButtons(); setupQuickControls(); renderDataList(); showSelected();
+
+// expose functions for console/testing
+window.addRecord = addRecord; window.predictCard = predictCard;
+ 
+service-worker.js
+const CACHE = 'tpk-analyzer-cache-v1';
+const FILES = ['/', '/index.html', '/style.css', '/script.js', '/manifest.json'];
+self.addEventListener('install', (evt) => {
+  evt.waitUntil(caches.open(CACHE).then(cache => cache.addAll(FILES)));
+  self.skipWaiting();
+});
+self.addEventListener('activate', (evt) => {
+  evt.waitUntil(caches.keys().then(keys => Promise.all(keys.map(k => { if(k !== CACHE) return caches.delete(k); }))));
+  self.clients.claim();
+});
+self.addEventListener('fetch', (evt) => {
+  evt.respondWith(caches.match(evt.request).then(r => r || fetch(evt.request)));
+});
