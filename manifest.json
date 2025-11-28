@@ -1,12 +1,9 @@
 {
   "name": "TPK Analyzer",
-  "short_name": "TPK Analyzer",
+  "short_name": "TPK",
   "start_url": ".",
   "display": "standalone",
-  "background_color": "#0b2b1a",
-  "theme_color": "#2b7a3e",
-  "icons": [
-    {"src":"icon-192.png","sizes":"192x192","type":"image/png"},
-    {"src":"icon-512.png","sizes":"512x512","type":"image/png"}
-  ]
+  "background_color": "#07180f",
+  "theme_color": "#2e9f6e",
+  "icons": []
 }
